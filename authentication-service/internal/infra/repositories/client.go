@@ -54,3 +54,39 @@ func (c *client) UpdateInfo(dest interface{}, newUpdate interface{}, id int) err
 
 	return nil
 }
+
+func (c *client) Delete(dest interface{}, id int) error {
+
+	result := c.db.Where("id = ?", id).Delete(dest)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return fmt.Errorf("ID didn't find %d", id)
+	}
+
+	return nil
+}
+
+func (c *client) Create(dest interface{}) error {
+	// Fist results
+	if err := c.db.Create(dest).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *client) ResetPassword(dest interface{}, id int, newPassword string) error {
+
+	result := c.db.Model(dest).Where("id = ?", id).Update("password", newPassword)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return fmt.Errorf("ID didn't find %d", id)
+	}
+
+	return nil
+}

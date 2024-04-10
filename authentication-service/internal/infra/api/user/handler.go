@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/deBeloper-code/authentication/internal/pkg/entity"
 	"github.com/deBeloper-code/authentication/internal/pkg/ports"
 	"github.com/gin-gonic/gin"
 )
@@ -94,4 +95,63 @@ func (u *userHandler) UpdateUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "User was updated!", "userId": user.ID})
+}
+
+func (u *userHandler) DeleteUser(c *gin.Context) {
+	var idReq IdRequest
+	// Validate Body
+	if err := c.BindJSON(&idReq); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No valid!"})
+		return
+	}
+	// Send service
+	err := u.userService.DeleteUserById(idReq.ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No user founded"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "User was deleted!", "userId": idReq.ID})
+
+}
+
+func (u *userHandler) CreateUser(c *gin.Context) {
+	var createUser entity.User
+	// Validate Body
+	if err := c.BindJSON(&createUser); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No valid!"})
+		return
+	}
+	// Send service
+	err := u.userService.CreateUser(createUser)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "User was created!"})
+
+}
+
+type PasswordRequest struct {
+	ID              int    `json:"id" binding:"required"`
+	CurrentPassword string `json:"currentPassword" binding:"required"`
+	NewPassword     string `json:"newPassword" binding:"required"`
+}
+
+func (u *userHandler) ResetPasswordUser(c *gin.Context) {
+	var password PasswordRequest
+	// Validate Body
+	if err := c.BindJSON(&password); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// Send service
+	err := u.userService.ResetPasswordUser(password.ID, password.NewPassword, password.CurrentPassword)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Password updated!"})
 }

@@ -16,4 +16,7 @@ func RegisterRoutes(e *gin.Engine) {
 	v1.GET("/user/email", handler.GetUserByEmail)
 	v1.GET("/user/id", handler.GetUserById)
 	v1.POST("/user/id", handler.UpdateUser)
+	v1.POST("/user", handler.CreateUser)
+	v1.PUT("/user/id", handler.ResetPasswordUser)
+	v1.DELETE("/user/id", handler.DeleteUser)
 }
