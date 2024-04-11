@@ -155,3 +155,42 @@ func (u *userHandler) ResetPasswordUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Password updated!"})
 }
+
+type LoginCredentials struct {
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+type ResponseLogged struct {
+	ID        int       `json:"id" `
+	Email     string    `json:"email"`
+	FirstName string    `json:"first_name"`
+	LastName  string    `json:"last_name"`
+	Active    int       `json:"active"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+func (u *userHandler) LoginUser(c *gin.Context) {
+	var credentials LoginCredentials
+	// Validate Body
+	if err := c.BindJSON(&credentials); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No valid!"})
+		return
+	}
+	// Send service
+	user, err := u.userService.LoginUser(credentials.Email, credentials.Password)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	response := ResponseLogged{
+		ID:        user.ID,
+		Email:     user.Email,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Active:    user.Active,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+	}
+	c.JSON(http.StatusOK, response)
+}

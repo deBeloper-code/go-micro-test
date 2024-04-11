@@ -90,3 +90,10 @@ func (c *client) ResetPassword(dest interface{}, id int, newPassword string) err
 
 	return nil
 }
+
+func (c *client) Login(dest interface{}, email string) error {
+	if err := c.db.First(dest, "email = ?", email).Error; err != nil {
+		return err
+	}
+	return nil
+}

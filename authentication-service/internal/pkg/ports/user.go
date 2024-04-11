@@ -10,6 +10,7 @@ type UserRepository interface {
 	Create(dest interface{}) error
 	Delete(dest interface{}, id int) error
 	ResetPassword(dest interface{}, id int, newPassword string) error
+	Login(dest interface{}, email string) error
 }
 type UserService interface {
 	GetAllUsers() ([]entity.User, error)
@@ -19,4 +20,5 @@ type UserService interface {
 	CreateUser(user entity.User) error
 	DeleteUserById(id int) error
 	ResetPasswordUser(id int, newPassword string, currentPassword string) error
+	LoginUser(email, password string) (entity.User, error)
 }

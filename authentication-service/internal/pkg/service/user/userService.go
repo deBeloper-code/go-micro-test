@@ -33,6 +33,20 @@ func (s *service) GetUserByEmail(email string) (entity.User, error) {
 	}
 	return usersFormat, nil
 }
+func (s *service) LoginUser(email, password string) (entity.User, error) {
+	var usersFormat entity.User
+	err := s.repo.Login(&usersFormat, email)
+	if err != nil {
+		return usersFormat, err
+	}
+
+	if err := tryMatchPassword(usersFormat.Password, password); err != nil {
+		log.New().Errorf(err.Error())
+		return usersFormat, err
+	}
+
+	return usersFormat, err
+}
 
 func (s *service) GetUserById(id int) (entity.User, error) {
 	var usersFormat entity.User

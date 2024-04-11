@@ -13,6 +13,7 @@ func RegisterRoutes(e *gin.Engine) {
 	v1 := e.Group("/api/v1")
 	// Get users
 	v1.GET("/users", handler.GetAll)
+	v1.POST("user/authenticate", handler.LoginUser)
 	v1.GET("/user/email", handler.GetUserByEmail)
 	v1.GET("/user/id", handler.GetUserById)
 	v1.POST("/user/id", handler.UpdateUser)
